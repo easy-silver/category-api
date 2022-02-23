@@ -13,7 +13,7 @@ public class CategoryCreateRequest {
     private String categoryName;
 
     //상위 카테고리 ID
-    private Long parentCategoryId;
+    private Long parentId;
 
     public Category toEntity() {
         return Category.builder()

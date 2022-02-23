@@ -2,6 +2,7 @@ package homework.jelee.categoryapi.web.controller;
 
 import homework.jelee.categoryapi.service.CategoryService;
 import homework.jelee.categoryapi.web.dto.CategoryCreateRequest;
+import homework.jelee.categoryapi.web.dto.CategoryUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,5 +23,12 @@ public class CategoryController {
     public Long createCategory(@RequestBody CategoryCreateRequest request) {
 
         return service.createCategory(request);
+    }
+
+    @PutMapping("/{categoryId}")
+    public void updateCategory(@PathVariable Long categoryId,
+                               @RequestBody CategoryUpdateRequest request) {
+
+        service.updateCategory(categoryId, request);
     }
 }
