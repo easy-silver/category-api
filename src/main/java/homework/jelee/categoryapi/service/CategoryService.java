@@ -49,4 +49,14 @@ public class CategoryService {
             category.setParent(parent);
         }
     }
+
+    /**
+     * 카테고리 삭제
+     */
+    public void deleteCategory(Long categoryId) {
+        Category category = repository.findById(categoryId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 ID=" + categoryId));
+
+        repository.delete(category);
+    }
 }

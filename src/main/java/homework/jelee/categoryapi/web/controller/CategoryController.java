@@ -25,10 +25,22 @@ public class CategoryController {
         return service.createCategory(request);
     }
 
+    /**
+     * 카테고리 수정
+     */
     @PutMapping("/{categoryId}")
     public void updateCategory(@PathVariable Long categoryId,
                                @RequestBody CategoryUpdateRequest request) {
 
         service.updateCategory(categoryId, request);
+    }
+
+    /**
+     * 카테고리 삭제
+     */
+    @DeleteMapping("/{categoryId}")
+    public void deleteCategory(@PathVariable Long categoryId) {
+
+        service.deleteCategory(categoryId);
     }
 }
