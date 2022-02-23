@@ -32,6 +32,10 @@ public class Category {
         this.parent = parent;
     }
 
+    public void setParent(Category parent) {
+        this.parent = parent;
+    }
+
     public void changeName(String name) {
         this.name = name;
     }
