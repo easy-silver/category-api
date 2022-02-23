@@ -31,4 +31,8 @@ public class Category {
         this.name = name;
         this.parent = parent;
     }
+
+    public void changeName(String name) {
+        this.name = name;
+    }
 }
