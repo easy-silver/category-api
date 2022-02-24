@@ -33,30 +33,43 @@ public class CategoryService {
 
     /**
      * 전체 카테고리 목록 조회
+     * @param parentId
      */
-    public CategoryListResponse getCategories() {
-        //ToDo. Depth 구조로 포맷해서 반환하도록 처리 필요
-        List<CategoryListQueryResult> categoryListQueryResults = repository.findAll()
-                .stream()
-                .map(CategoryListQueryResult::new)
-                .collect(Collectors.toList());
+    public CategoryListResponse getCategories(Long parentId) {
 
-        return new CategoryListResponse(categoryListQueryResults.size(), categoryListQueryResults);
+        //ToDo. Depth 구조로 포맷해서 반환하도록 처리 필요
+
+        //전체 카테고리 목록 조회
+        if (parentId == null) {
+            List<CategoryListQueryResult> categories = findAllCategories();
+            return new CategoryListResponse(categories.size(), categories);
+        }
+
+        //하위 카테고리 목록 조회
+        List<CategoryListQueryResult> subCategories = findSubCategories(parentId);
+        return new CategoryListResponse(subCategories.size(), subCategories);
     }
 
     /**
-     * 해당 카테고리의 하위 카테고리 목록 조회
+     * 전체 카테고리 엔티티 DTO 리스트로 변환
      */
-    public CategoryListResponse getCategoriesByParent(Long parentId) {
-        Category parent = getCategoryEntity(parentId);
-
-        //ToDo. Depth 구조로 포맷해서 반환하도록 처리 필요
-        List<CategoryListQueryResult> categoryListQueryResults = repository.findAllByParent(parent)
+    private List<CategoryListQueryResult> findAllCategories() {
+        return repository.findAll()
                 .stream()
                 .map(CategoryListQueryResult::new)
                 .collect(Collectors.toList());
+    }
 
-        return new CategoryListResponse(categoryListQueryResults.size(), categoryListQueryResults);
+    /**
+     * 하위 카테고리 엔티티 DTO 리스트로 변환
+     */
+    private List<CategoryListQueryResult> findSubCategories(Long parentId) {
+        Category parent = getCategoryEntity(parentId);
+
+        return repository.findAllByParent(parent)
+                .stream()
+                .map(CategoryListQueryResult::new)
+                .collect(Collectors.toList());
     }
 
     /**
