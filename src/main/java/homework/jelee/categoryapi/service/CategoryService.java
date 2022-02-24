@@ -26,13 +26,7 @@ public class CategoryService {
      */
     public Long createCategory(CategoryCreateRequest request) {
         Category category = request.toEntity();
-        Long parentId = request.getParentId();
-
-        if (parentId != null) {
-            Category parent = repository.findById(parentId)
-                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 카테고리 ID=" + parentId));
-            category.setParent(parent);
-        }
+        setParentCategory(category, request.getParentId());
 
         return repository.save(category).getId();
     }
@@ -54,8 +48,7 @@ public class CategoryService {
      * 해당 카테고리의 하위 카테고리 목록 조회
      */
     public CategoryListResponse getCategoriesByParent(Long parentId) {
-        Category parent = repository.findById(parentId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 카테고리 ID=" + parentId));
+        Category parent = getCategoryEntity(parentId);
 
         //ToDo. Depth 구조로 포맷해서 반환하도록 처리 필요
         List<CategoryListQueryResult> categoryListQueryResults = repository.findAllByParent(parent)
@@ -70,26 +63,37 @@ public class CategoryService {
      * 카테고리 수정
      */
     public void updateCategory(Long categoryId, CategoryUpdateRequest request) {
-        Category category = repository.findById(categoryId)
-                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 카테고리 ID=" + categoryId));
+        Category category = getCategoryEntity(categoryId);
 
         category.changeName(request.getCategoryName());
-        Long parentId = request.getParentId();
-
-        if (parentId != null) {
-            Category parent = repository.findById(parentId)
-                    .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 카테고리 ID=" + parentId));
-            category.setParent(parent);
-        }
+        setParentCategory(category, request.getParentId());
     }
 
     /**
      * 카테고리 삭제
      */
     public void deleteCategory(Long categoryId) {
-        Category category = repository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 카테고리 ID=" + categoryId));
+        Category category = getCategoryEntity(categoryId);
 
         repository.delete(category);
     }
+
+    /**
+     * 카테고리 ID로 카테고리 엔티티 조회
+     */
+    private Category getCategoryEntity(Long categoryId) {
+        return repository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 카테고리 ID=" + categoryId));
+    }
+
+    /**
+     * 상위 카테고리 등록
+     */
+    private void setParentCategory(Category category, Long parentId) {
+        if (parentId != null) {
+            Category parent = getCategoryEntity(parentId);
+            category.setParent(parent);
+        }
+    }
+
 }
