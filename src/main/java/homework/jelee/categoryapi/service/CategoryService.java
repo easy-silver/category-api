@@ -3,8 +3,7 @@ package homework.jelee.categoryapi.service;
 import homework.jelee.categoryapi.domain.category.Category;
 import homework.jelee.categoryapi.domain.category.CategoryRepository;
 import homework.jelee.categoryapi.web.dto.CategoryCreateRequest;
-import homework.jelee.categoryapi.web.dto.CategoryListQueryResult;
-import homework.jelee.categoryapi.web.dto.CategoryListResponse;
+import homework.jelee.categoryapi.web.dto.CategoryDto;
 import homework.jelee.categoryapi.web.dto.CategoryUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,45 +31,24 @@ public class CategoryService {
     }
 
     /**
-     * 전체 카테고리 목록 조회
-     * @param parentId
+     * 카테고리 목록 조회
      */
-    public CategoryListResponse getCategories(Long parentId) {
-
-        //ToDo. Depth 구조로 포맷해서 반환하도록 처리 필요
-
-        //전체 카테고리 목록 조회
-        if (parentId == null) {
-            List<CategoryListQueryResult> categories = findAllCategories();
-            return new CategoryListResponse(categories.size(), categories);
+    public List<CategoryDto> getCategories(Long categoryId) {
+        //특정 아이디가 없을 경우 전체 조회
+        if (categoryId == null) {
+            return repository.findAllByParentIsNull()
+                    .stream()
+                    .map(CategoryDto::new)
+                    .collect(Collectors.toList());
         }
 
-        //하위 카테고리 목록 조회
-        List<CategoryListQueryResult> subCategories = findSubCategories(parentId);
-        return new CategoryListResponse(subCategories.size(), subCategories);
-    }
-
-    /**
-     * 전체 카테고리 엔티티 DTO 리스트로 변환
-     */
-    private List<CategoryListQueryResult> findAllCategories() {
-        return repository.findAll()
-                .stream()
-                .map(CategoryListQueryResult::new)
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 하위 카테고리 엔티티 DTO 리스트로 변환
-     */
-    private List<CategoryListQueryResult> findSubCategories(Long parentId) {
-        Category parent = getCategoryEntity(parentId);
-
+        Category parent = getCategoryEntity(categoryId);
         return repository.findAllByParent(parent)
                 .stream()
-                .map(CategoryListQueryResult::new)
+                .map(CategoryDto::new)
                 .collect(Collectors.toList());
     }
+
 
     /**
      * 카테고리 수정

@@ -7,12 +7,9 @@ import java.util.List;
 @Getter
 public class CategoryListResponse {
 
-    private long totalCount;
+    private final List<CategoryDto> categories;
 
-    private List<CategoryListQueryResult> categories;
-
-    public CategoryListResponse(long totalCount, List<CategoryListQueryResult> categories) {
-        this.totalCount = totalCount;
+    public CategoryListResponse(List<CategoryDto> categories) {
         this.categories = categories;
     }
 }

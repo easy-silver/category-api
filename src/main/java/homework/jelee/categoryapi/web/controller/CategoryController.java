@@ -30,8 +30,9 @@ public class CategoryController {
      * 카테고리 목록 조회
      */
     @GetMapping("")
-    public CategoryListResponse getCategories(@RequestParam(value = "parentId", required = false) Long parentId) {
-        return service.getCategories(parentId);
+    public CategoryListResponse getCategories(@RequestParam(value = "categoryId", required = false) Long categoryId) {
+
+        return new CategoryListResponse(service.getCategories(categoryId));
     }
 
     /**
