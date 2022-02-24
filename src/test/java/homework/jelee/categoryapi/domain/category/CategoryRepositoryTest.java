@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -14,7 +16,7 @@ class CategoryRepositoryTest {
 
     @Test
     @DisplayName("최상위 카테고리 등록")
-    void save_root_category() {
+    void saveRootCategory() {
         //given
         Category category = Category.builder()
                 .name("상의")
@@ -32,7 +34,7 @@ class CategoryRepositoryTest {
 
     @Test
     @DisplayName("하위 카테고리 등록")
-    void save_sub_category() {
+    void saveSubCategory() {
         //given
         Category parentCategory = repository.save(Category.builder()
                 .name("상의")
@@ -47,6 +49,48 @@ class CategoryRepositoryTest {
         //then
         assertThat(childCategory.getParent()).isNotNull();
         assertThat(childCategory.getParent().getId()).isEqualTo(parentCategory.getId());
+    }
+
+    @Test
+    @DisplayName("카테고리 전체 조회")
+    void findAll() {
+        //given
+        Category category1 = repository.save(Category.builder()
+                .name("상의")
+                .build());
+
+        Category category2 = repository.save(Category.builder()
+                .name("하의")
+                .build());
+
+        //when
+        List<Category> categories = repository.findAll();
+
+        //then
+        assertThat(categories.size()).isEqualTo(2);
+        assertThat(categories).contains(category1);
+        assertThat(categories).contains(category2);
+        assertThat(categories).containsExactly(category1, category2);
+    }
+
+    @Test
+    @DisplayName("상위 카테고리로 하위 카테고리 전체 조회")
+    void findAllByParent() {
+        //given
+        Category parentCategory = repository.save(Category.builder()
+                .name("상의")
+                .build());
+
+        Category childrenCategory = repository.save(Category.builder()
+                .name("반팔 티셔츠")
+                .parent(parentCategory)
+                .build());
+
+        //when
+        List<Category> child = repository.findAllByParent(parentCategory);
+
+        //then
+        assertThat(child).containsExactly(childrenCategory);
     }
 
     @Test
