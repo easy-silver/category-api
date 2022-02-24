@@ -3,6 +3,7 @@ package homework.jelee.categoryapi.web.dto;
 import homework.jelee.categoryapi.domain.category.Category;
 import lombok.Getter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 
 /**
@@ -16,6 +17,7 @@ public class CategoryCreateRequest {
     private String categoryName;
 
     //상위 카테고리 ID
+    @Min(1)
     private Long parentId;
 
     public Category toEntity() {
