@@ -10,7 +10,7 @@ spring:
     password:
 
   jpa:
-    #defer-datasource-initialization: true
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
     properties:
