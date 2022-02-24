@@ -33,22 +33,31 @@ public class CategoryService {
     /**
      * 카테고리 목록 조회
      */
+    @Transactional(readOnly = true)
     public List<CategoryDto> getCategories(Long categoryId) {
-        //특정 아이디가 없을 경우 전체 조회
         if (categoryId == null) {
-            return repository.findAllByParentIsNull()
-                    .stream()
-                    .map(CategoryDto::new)
-                    .collect(Collectors.toList());
+            return getAllCategories();
         }
 
         Category parent = getCategoryEntity(categoryId);
-        return repository.findAllByParent(parent)
+        return getSubCategories(parent);
+    }
+
+    //전체 카테고리 조회
+    private List<CategoryDto> getAllCategories() {
+        return repository.findAllByParentIsNull()
                 .stream()
                 .map(CategoryDto::new)
                 .collect(Collectors.toList());
     }
 
+    //해당 카테고리의 하위 카테고리 조회
+    private List<CategoryDto> getSubCategories(Category parent) {
+        return repository.findAllByParent(parent)
+                .stream()
+                .map(CategoryDto::new)
+                .collect(Collectors.toList());
+    }
 
     /**
      * 카테고리 수정
