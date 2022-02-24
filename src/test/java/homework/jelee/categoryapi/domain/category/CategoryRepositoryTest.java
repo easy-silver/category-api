@@ -53,7 +53,7 @@ class CategoryRepositoryTest {
 
     @Test
     @DisplayName("카테고리 전체 조회")
-    void findAll() {
+    void findAllByParentIsNull() {
         //given
         Category category1 = repository.save(Category.builder()
                 .name("상의")
@@ -63,10 +63,16 @@ class CategoryRepositoryTest {
                 .name("하의")
                 .build());
 
+        repository.save(Category.builder()
+                .name("셔츠")
+                .parent(category1)
+                .build());
+
         //when
-        List<Category> categories = repository.findAll();
+        List<Category> categories = repository.findAllByParentIsNull();
 
         //then
+        assertThat(repository.count()).isEqualTo(3);
         assertThat(categories.size()).isEqualTo(2);
         assertThat(categories).contains(category1);
         assertThat(categories).contains(category2);
