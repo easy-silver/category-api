@@ -2,6 +2,7 @@ package homework.jelee.categoryapi.web.controller;
 
 import homework.jelee.categoryapi.service.CategoryService;
 import homework.jelee.categoryapi.web.dto.CategoryCreateRequest;
+import homework.jelee.categoryapi.web.dto.CategoryListResponse;
 import homework.jelee.categoryapi.web.dto.CategoryUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,19 @@ public class CategoryController {
     public Long createCategory(@RequestBody CategoryCreateRequest request) {
 
         return service.createCategory(request);
+    }
+
+    /**
+     * 카테고리 목록 조회
+     * 상위 카테고리 아이디가 없다면 전체 조회,
+     * 있다면 해당 카테고리의 하위 카테고리만 조회
+     */
+    @GetMapping("")
+    public CategoryListResponse getCategories(@RequestParam(value = "parentId", required = false) Long parentId) {
+        if (parentId == null) {
+            return service.getCategories();
+        }
+        return service.getCategoriesByParent(parentId);
     }
 
     /**
