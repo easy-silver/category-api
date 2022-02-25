@@ -27,4 +27,12 @@ public class CategoryCreateRequest {
                 .build();
     }
 
+    public CategoryCreateRequest(@NotEmpty String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public CategoryCreateRequest(@NotEmpty String categoryName, @Min(1) Long parentId) {
+        this.categoryName = categoryName;
+        this.parentId = parentId;
+    }
 }

@@ -3,6 +3,7 @@ package homework.jelee.categoryapi.service;
 import homework.jelee.categoryapi.domain.category.Category;
 import homework.jelee.categoryapi.domain.category.CategoryRepository;
 import homework.jelee.categoryapi.web.dto.CategoryCreateRequest;
+import homework.jelee.categoryapi.web.dto.CategoryDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +13,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,8 +33,7 @@ class CategoryServiceTest {
     @DisplayName("최상위 카테고리 등록")
     void createRootCategory() {
         //given
-        CategoryCreateRequest request = new CategoryCreateRequest();
-        request.setCategoryName("상의");
+        CategoryCreateRequest request = new CategoryCreateRequest("상의");
         Category categoryEntity = request.toEntity();
 
         Long fakeCategoryId = 1L;
@@ -51,6 +53,29 @@ class CategoryServiceTest {
 
         assertThat(findCategory.getName()).isEqualTo(categoryEntity.getName());
         assertThat(findCategory.getId()).isEqualTo(categoryEntity.getId());
+    }
+
+    @Test
+    @DisplayName("전체 카테고리 조회")
+    void getCategories() {
+        //given
+        Category category = Category.builder()
+                .name("하의")
+                .build();
+        List<Category> categories = new ArrayList<>();
+        categories.add(category);
+
+        //mocking
+        given(categoryRepository.findAllByParentIsNull())
+                .willReturn(categories);
+
+        //when
+        Long parentId = null;
+        List<CategoryDto> categoryDtos = categoryService.getCategories(parentId);
+
+        //then
+        assertThat(categoryDtos.size()).isEqualTo(1);
+        assertThat(categoryDtos.get(0).getCategoryName()).isEqualTo(category.getName());
     }
 
 }
