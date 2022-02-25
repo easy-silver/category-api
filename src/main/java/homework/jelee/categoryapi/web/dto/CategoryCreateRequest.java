@@ -2,6 +2,7 @@ package homework.jelee.categoryapi.web.dto;
 
 import homework.jelee.categoryapi.domain.category.Category;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -9,7 +10,7 @@ import javax.validation.constraints.NotEmpty;
 /**
  * 카테고리 등록 Request DTO
  */
-@Getter
+@Getter @Setter
 public class CategoryCreateRequest {
 
     //카테고리 이름
