@@ -6,6 +6,9 @@ import homework.jelee.categoryapi.web.dto.CategoryCreateRequest;
 import homework.jelee.categoryapi.web.dto.CategoryDto;
 import homework.jelee.categoryapi.web.dto.CategoryUpdateRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +16,7 @@ import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CacheConfig(cacheNames = {"categoryCache"})
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -23,6 +27,7 @@ public class CategoryService {
     /**
      * 카테고리 등록
      */
+    @CacheEvict(allEntries = true)
     public Long createCategory(CategoryCreateRequest request) {
         Category category = request.toEntity();
         setParentCategory(category, request.getParentId());
@@ -33,6 +38,7 @@ public class CategoryService {
     /**
      * 카테고리 목록 조회
      */
+    @Cacheable(value = "categoryCache")
     @Transactional(readOnly = true)
     public List<CategoryDto> getCategories(Long categoryId) {
         if (categoryId == null) {
@@ -62,6 +68,7 @@ public class CategoryService {
     /**
      * 카테고리 수정
      */
+    @CacheEvict(allEntries = true)
     public void updateCategory(Long categoryId, CategoryUpdateRequest request) {
         Category category = getCategoryEntity(categoryId);
 
@@ -72,6 +79,7 @@ public class CategoryService {
     /**
      * 카테고리 삭제
      */
+    @CacheEvict(allEntries = true)
     public void deleteCategory(Long categoryId) {
         Category category = getCategoryEntity(categoryId);
 
