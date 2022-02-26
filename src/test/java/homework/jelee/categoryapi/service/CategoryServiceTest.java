@@ -21,7 +21,11 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Service Layer Unit Test
@@ -156,6 +160,27 @@ class CategoryServiceTest {
         //then
         Category findCategory = categoryRepository.findById(categoryId).get();
         assertThat(findCategory.getName()).isEqualTo(newName);
+    }
+
+    @Test
+    @DisplayName("카테고리 삭제")
+    void deleteCategory() {
+        //given
+        Category category = Category.builder()
+                .name("액세서리")
+                .build();
+        Long categoryId = 1L;
+        ReflectionTestUtils.setField(category, "id", categoryId);
+
+        //mocking
+        given(categoryRepository.findById(categoryId))
+                .willReturn(Optional.of(category));
+
+        //when
+        categoryService.deleteCategory(categoryId);
+
+        //then
+        verify(categoryRepository, times(1)).delete(any());
     }
 
 }
