@@ -9,6 +9,7 @@
 - H2 Database
 - Lombok
 - Validation
+- Swagger
 
 ## Run
 ### install
