@@ -18,6 +18,6 @@ $ git clone https://github.com/easy-silver/category-api.git
 
 ### Run
 ```bash
-$ 
-$ 
+$ ./gradlew build
+$ java -jar ./build/libs/category-api-0.0.1-SNAPSHOT.jar
 ```
