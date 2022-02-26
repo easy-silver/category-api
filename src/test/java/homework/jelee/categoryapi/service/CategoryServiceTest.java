@@ -33,7 +33,7 @@ class CategoryServiceTest {
 
     @Test
     @DisplayName("최상위 카테고리 등록")
-    void createRootCategory() {
+    void createRootCategoryOK() {
         //given
         CategoryCreateRequest request = new CategoryCreateRequest("상의");
         Category categoryEntity = request.toEntity();
@@ -55,6 +55,38 @@ class CategoryServiceTest {
 
         assertThat(findCategory.getName()).isEqualTo(categoryEntity.getName());
         assertThat(findCategory.getId()).isEqualTo(categoryEntity.getId());
+    }
+
+    @Test
+    @DisplayName("하위 카테고리 등록")
+    void createSubCategoryOK() {
+        //given
+        Category parentCategory = Category.builder()
+                .name("상의")
+                .build();
+        Long parentId = 1L;
+        ReflectionTestUtils.setField(parentCategory, "id", parentId);
+
+        CategoryCreateRequest request = new CategoryCreateRequest("반팔티셔츠", parentId);
+        Category subCategory = request.toEntity();
+        Long fakeId = 2L;
+        ReflectionTestUtils.setField(subCategory, "id", fakeId);
+
+        //mocking
+        given(categoryRepository.findById(parentId))
+                .willReturn(Optional.of(parentCategory));
+        given(categoryRepository.save(Mockito.any()))
+                .willReturn(subCategory);
+        given(categoryRepository.findById(fakeId))
+                .willReturn(Optional.of(subCategory));
+
+        //when
+        Long categoryId = categoryService.createCategory(request);
+
+        //then
+        Category findCategory = categoryRepository.findById(fakeId).get();
+        assertThat(categoryId).isEqualTo(subCategory.getId());
+        assertThat(findCategory.getName()).isEqualTo(subCategory.getName());
     }
 
     @Test
