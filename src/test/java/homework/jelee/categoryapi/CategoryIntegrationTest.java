@@ -1,5 +1,6 @@
 package homework.jelee.categoryapi;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import homework.jelee.categoryapi.web.dto.CategoryCreateRequest;
 import homework.jelee.categoryapi.web.dto.CategoryListResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -8,7 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,19 +29,21 @@ public class CategoryIntegrationTest {
 
     @Autowired
     MockMvc mvc;
-    
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
     @DisplayName("최상위 카테고리 등록")
-    void createCategory() {
-        //given
-        CategoryCreateRequest request = new CategoryCreateRequest("상의");
+    void crateCategoryOK() throws Exception {
+        CategoryCreateRequest request = new CategoryCreateRequest("아우터");
 
-        //when
-        Long categoryId = testRestTemplate
-                .postForObject("/categories", request, Long.class);
-
-        //then
-        assertThat(categoryId).isEqualTo(1L);
+        mvc.perform(MockMvcRequestBuilders.post("/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
