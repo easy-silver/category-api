@@ -34,13 +34,14 @@ public class CategoryIntegrationTest {
 
     @Autowired
     CategoryRepository categoryRepository;
+    final String URI = "/categories";
 
     @Test
     @DisplayName("최상위 카테고리 등록")
     void crateCategoryOK() throws Exception {
         CategoryCreateRequest request = new CategoryCreateRequest("아우터");
 
-        mvc.perform(post("/categories")
+        mvc.perform(post(URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .accept(MediaType.APPLICATION_JSON))
@@ -54,7 +55,7 @@ public class CategoryIntegrationTest {
     void crateCategoryFail() throws Exception {
         CategoryCreateRequest request = new CategoryCreateRequest("");
 
-        mvc.perform(post("/categories")
+        mvc.perform(post(URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .accept(MediaType.APPLICATION_JSON))
@@ -67,7 +68,7 @@ public class CategoryIntegrationTest {
     void crateCategoryNotFoundParent() throws Exception {
         CategoryCreateRequest request = new CategoryCreateRequest("반팔티셔츠", 1L);
 
-        mvc.perform(post("/categories")
+        mvc.perform(post(URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .accept(MediaType.APPLICATION_JSON))
@@ -84,7 +85,7 @@ public class CategoryIntegrationTest {
                 .build());
 
         //when, then
-        mvc.perform(get("/categories")
+        mvc.perform(get(URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -106,7 +107,7 @@ public class CategoryIntegrationTest {
         request.setCategoryName(newCategoryName);
 
         //when
-        mvc.perform(put("/categories/" + categoryId)
+        mvc.perform(put(URI + "/" + categoryId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .accept(MediaType.APPLICATION_JSON))
@@ -115,6 +116,24 @@ public class CategoryIntegrationTest {
         //then
         Category findCategory = categoryRepository.findById(categoryId).get();
         assertThat(findCategory.getName()).isEqualTo(newCategoryName);
+    }
+
+    @Test
+    @DisplayName("카테고리 삭제")
+    void deleteCategory() throws Exception {
+        //given
+        Long categoryId = categoryRepository.save(Category.builder()
+                .name("액세서리")
+                .build()).getId();
+
+        //when
+        mvc.perform(delete(URI + "/" + categoryId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        //then
+        assertThat(categoryRepository.count()).isEqualTo(0);
     }
 
 }
