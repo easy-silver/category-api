@@ -4,6 +4,7 @@ import homework.jelee.categoryapi.domain.category.Category;
 import homework.jelee.categoryapi.domain.category.CategoryRepository;
 import homework.jelee.categoryapi.web.dto.CategoryCreateRequest;
 import homework.jelee.categoryapi.web.dto.CategoryDto;
+import homework.jelee.categoryapi.web.dto.CategoryUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -128,6 +129,33 @@ class CategoryServiceTest {
         //then
         assertThat(categoryDtos.size()).isEqualTo(1);
         assertThat(categoryDtos.get(0).getCategoryName()).isEqualTo(category.getName());
+    }
+
+    @Test
+    @DisplayName("카테고리 수정")
+    void updateCategory() {
+        //give
+        Category category = Category.builder()
+                .name("겉옷")
+                .build();
+
+        Long categoryId = 1L;
+        ReflectionTestUtils.setField(category, "id", categoryId);
+
+        CategoryUpdateRequest request = new CategoryUpdateRequest();
+        String newName = "아우터";
+        request.setCategoryName(newName);
+
+        //mocking
+        given(categoryRepository.findById(categoryId))
+                .willReturn(Optional.of(category));
+
+        //when
+        categoryService.updateCategory(categoryId, request);
+
+        //then
+        Category findCategory = categoryRepository.findById(categoryId).get();
+        assertThat(findCategory.getName()).isEqualTo(newName);
     }
 
 }
