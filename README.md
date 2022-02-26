@@ -21,3 +21,6 @@ $ git clone https://github.com/easy-silver/category-api.git
 $ ./gradlew build
 $ java -jar ./build/libs/category-api-0.0.1-SNAPSHOT.jar
 ```
+
+### Document
+http://localhost:8080/swagger-ui.html
