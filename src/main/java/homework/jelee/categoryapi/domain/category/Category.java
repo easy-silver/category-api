@@ -26,6 +26,7 @@ public class Category {
     @JoinColumn(name = "parent_id")
     private Category parent;
 
+    //하위 카테고리 리스트
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Category> children = new ArrayList<>();
 

@@ -11,17 +11,24 @@
 - Validation
 - Swagger
 
-## Run
+## How to
 ### install
 ```bash
 $ git clone https://github.com/easy-silver/category-api.git
 ```
 
-### Run
+### Build
 ```bash
 $ ./gradlew build
+```
+
+### Run
+```bash
 $ java -jar ./build/libs/category-api-0.0.1-SNAPSHOT.jar
 ```
 
-### Document
+## Document
 http://localhost:8080/swagger-ui.html
+
+## Note
+- 카테고리 목록 조회 시 메모리 캐시를 사용하도록 구현했습니다.<br>(카테고리 등록/수정/삭제 시에는 기존 캐시를 제거하도록 처리했습니다.)
