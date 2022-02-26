@@ -13,11 +13,13 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,6 +55,21 @@ class CategoryServiceTest {
 
         assertThat(findCategory.getName()).isEqualTo(categoryEntity.getName());
         assertThat(findCategory.getId()).isEqualTo(categoryEntity.getId());
+    }
+
+    @Test
+    @DisplayName("하위 카테고리 등록 시 상위 카테고리 아이디가 유효하지 않을 경우 EntityNotFountException이 발생한다.")
+    void createSubCategoryFail() {
+        //given
+        Long parentId = 999L;
+        CategoryCreateRequest request = new CategoryCreateRequest("반팔티셔츠", parentId);
+
+        //mocking
+        given(categoryRepository.findById(parentId))
+                .willReturn(Optional.empty());
+
+        //when, then
+        assertThrows(EntityNotFoundException.class, () -> categoryService.createCategory(request));
     }
 
     @Test
