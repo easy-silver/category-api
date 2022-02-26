@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -22,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * 스프링 컨테이너를 이용한 통합 테스트
  */
+@Transactional
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CategoryIntegrationTest {
@@ -46,7 +48,6 @@ public class CategoryIntegrationTest {
                 .content(objectMapper.writeValueAsString(request))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(content().string("1"))
                 .andDo(print());
     }
 
