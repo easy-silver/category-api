@@ -22,6 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
+/**
+ * Service Layer Unit Test
+ */
 @ExtendWith(MockitoExtension.class)
 class CategoryServiceTest {
 
