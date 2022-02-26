@@ -1,21 +1,24 @@
 package homework.jelee.categoryapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import homework.jelee.categoryapi.domain.category.Category;
+import homework.jelee.categoryapi.domain.category.CategoryRepository;
 import homework.jelee.categoryapi.web.dto.CategoryCreateRequest;
-import homework.jelee.categoryapi.web.dto.CategoryListResponse;
+import homework.jelee.categoryapi.web.dto.CategoryUpdateRequest;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * 스프링 컨테이너를 이용한 통합 테스트
@@ -25,24 +28,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CategoryIntegrationTest {
 
     @Autowired
-    TestRestTemplate testRestTemplate;
-
-    @Autowired
     MockMvc mvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
+
+    @Autowired
+    CategoryRepository categoryRepository;
 
     @Test
     @DisplayName("최상위 카테고리 등록")
     void crateCategoryOK() throws Exception {
         CategoryCreateRequest request = new CategoryCreateRequest("아우터");
 
-        mvc.perform(MockMvcRequestBuilders.post("/categories")
+        mvc.perform(post("/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(status().isCreated())
+                .andExpect(content().string("1"))
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -51,11 +55,11 @@ public class CategoryIntegrationTest {
     void crateCategoryFail() throws Exception {
         CategoryCreateRequest request = new CategoryCreateRequest("");
 
-        mvc.perform(MockMvcRequestBuilders.post("/categories")
+        mvc.perform(post("/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(status().isBadRequest())
                 .andDo(MockMvcResultHandlers.print());
     }
 
@@ -64,24 +68,44 @@ public class CategoryIntegrationTest {
     void crateCategoryNotFoundParent() throws Exception {
         CategoryCreateRequest request = new CategoryCreateRequest("반팔티셔츠", 1L);
 
-        mvc.perform(MockMvcRequestBuilders.post("/categories")
+        mvc.perform(post("/categories")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
     }
 
-
     @Test
     @DisplayName("전체 카테고리 조회")
-    void getCategories() {
+    void getCategories() throws Exception {
+        mvc.perform(get("/categories")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("카테고리 수정")
+    void updateCategory() throws Exception {
+        //given
+        Long categoryId = categoryRepository.save(Category.builder()
+                .name("겉옷")
+                .build()).getId();
+        CategoryUpdateRequest request = new CategoryUpdateRequest();
+        String newCategoryName = "아우터";
+        request.setCategoryName(newCategoryName);
+
         //when
-        CategoryListResponse response = testRestTemplate
-                .getForObject("/categories", CategoryListResponse.class);
+        mvc.perform(put("/categories/" + categoryId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
 
         //then
-        assertThat(response.getCategories().size()).isEqualTo(0);
-
+        Category findCategory = categoryRepository.findById(categoryId).get();
+        assertThat(findCategory.getName()).isEqualTo(newCategoryName);
     }
+
 }
