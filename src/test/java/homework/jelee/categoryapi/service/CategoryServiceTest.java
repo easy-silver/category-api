@@ -3,7 +3,7 @@ package homework.jelee.categoryapi.service;
 import homework.jelee.categoryapi.domain.category.Category;
 import homework.jelee.categoryapi.domain.category.CategoryRepository;
 import homework.jelee.categoryapi.web.dto.CategoryCreateRequest;
-import homework.jelee.categoryapi.web.dto.CategoryDto;
+import homework.jelee.categoryapi.web.dto.CategoryListQueryResult;
 import homework.jelee.categoryapi.web.dto.CategoryUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -127,11 +127,11 @@ class CategoryServiceTest {
 
         //when
         Long parentId = null;
-        List<CategoryDto> categoryDtos = categoryService.getCategories(parentId);
+        List<CategoryListQueryResult> categoryListQueryResults = categoryService.getCategories(parentId);
 
         //then
-        assertThat(categoryDtos.size()).isEqualTo(1);
-        assertThat(categoryDtos.get(0).getCategoryName()).isEqualTo(category.getName());
+        assertThat(categoryListQueryResults.size()).isEqualTo(1);
+        assertThat(categoryListQueryResults.get(0).getCategoryName()).isEqualTo(category.getName());
     }
 
     @Test

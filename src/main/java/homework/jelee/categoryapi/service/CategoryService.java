@@ -3,7 +3,7 @@ package homework.jelee.categoryapi.service;
 import homework.jelee.categoryapi.domain.category.Category;
 import homework.jelee.categoryapi.domain.category.CategoryRepository;
 import homework.jelee.categoryapi.web.dto.CategoryCreateRequest;
-import homework.jelee.categoryapi.web.dto.CategoryDto;
+import homework.jelee.categoryapi.web.dto.CategoryListQueryResult;
 import homework.jelee.categoryapi.web.dto.CategoryUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheConfig;
@@ -40,7 +40,7 @@ public class CategoryService {
      */
     @Cacheable(value = "categoryCache")
     @Transactional(readOnly = true)
-    public List<CategoryDto> getCategories(Long categoryId) {
+    public List<CategoryListQueryResult> getCategories(Long categoryId) {
         if (categoryId == null) {
             return getAllCategories();
         }
@@ -50,18 +50,18 @@ public class CategoryService {
     }
 
     //전체 카테고리 조회
-    private List<CategoryDto> getAllCategories() {
+    private List<CategoryListQueryResult> getAllCategories() {
         return repository.findAllByParentIsNull()
                 .stream()
-                .map(CategoryDto::new)
+                .map(CategoryListQueryResult::new)
                 .collect(Collectors.toList());
     }
 
     //해당 카테고리의 하위 카테고리 조회
-    private List<CategoryDto> getSubCategories(Category parent) {
+    private List<CategoryListQueryResult> getSubCategories(Category parent) {
         return repository.findAllByParent(parent)
                 .stream()
-                .map(CategoryDto::new)
+                .map(CategoryListQueryResult::new)
                 .collect(Collectors.toList());
     }
 

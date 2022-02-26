@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 카테고리 목록 조회에 대한 결과 DTO
+ * 카테고리 목록 조회에 대한 쿼리 결과 DTO
  */
-@ApiModel(description = "카테고리 정보")
+@ApiModel(description = "카테고리 목록에 표현할 정보")
 @Getter
-public class CategoryDto {
+public class CategoryListQueryResult {
 
     @ApiModelProperty(position = 1, value = "카테고리 아이디", required = true)
     private Long categoryId;
@@ -25,14 +25,14 @@ public class CategoryDto {
     private Long parentId;
 
     @ApiModelProperty(position = 4, value = "하위 카테고리 리스트")
-    private List<CategoryDto> children;
+    private List<CategoryListQueryResult> children;
 
-    public CategoryDto(Category entity) {
+    public CategoryListQueryResult(Category entity) {
         categoryId = entity.getId();
         categoryName = entity.getName();
         parentId = entity.getParent() != null ? entity.getParent().getId() : null;
         children = entity.getChildren().stream()
-                .map(CategoryDto::new)
+                .map(CategoryListQueryResult::new)
                 .collect(Collectors.toList());
     }
 }

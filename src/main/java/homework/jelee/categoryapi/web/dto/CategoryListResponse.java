@@ -13,9 +13,9 @@ import java.util.List;
 public class CategoryListResponse {
 
     @ApiModelProperty(value = "카테고리 리스트", required = true)
-    private List<CategoryDto> categories;
+    private List<CategoryListQueryResult> categories;
 
-    public CategoryListResponse(List<CategoryDto> categories) {
+    public CategoryListResponse(List<CategoryListQueryResult> categories) {
         this.categories = categories;
     }
 }
