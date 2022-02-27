@@ -36,6 +36,7 @@ public class CategoryIntegrationTest {
 
     @Autowired
     CategoryRepository categoryRepository;
+
     final String URI = "/categories";
 
     @Test
@@ -126,7 +127,7 @@ public class CategoryIntegrationTest {
         CategoryUpdateRequest request = new CategoryUpdateRequest();
 
         //when, then
-        mvc.perform(put(URI + "/" + 1L)
+        mvc.perform(put(URI + "/" + 1)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .accept(MediaType.APPLICATION_JSON))
@@ -142,7 +143,7 @@ public class CategoryIntegrationTest {
         request.setCategoryName(newCategoryName);
 
         //when, then
-        mvc.perform(put(URI + "/" + 999L)
+        mvc.perform(put(URI + "/" + 999)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
                 .accept(MediaType.APPLICATION_JSON))
@@ -171,7 +172,7 @@ public class CategoryIntegrationTest {
     @DisplayName("카테고리 삭제 시 유효하지 않은 ID인 경우 404 응답 코드를 반환한다.")
     void deleteCategoryNotFound() throws Exception {
 
-        mvc.perform(delete(URI + "/" + 9999L)
+        mvc.perform(delete(URI + "/" + 9999)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
