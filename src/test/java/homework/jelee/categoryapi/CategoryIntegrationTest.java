@@ -167,4 +167,14 @@ public class CategoryIntegrationTest {
         assertThat(categoryRepository.count()).isEqualTo(0);
     }
 
+    @Test
+    @DisplayName("카테고리 삭제 시 유효하지 않은 ID인 경우 404 응답 코드를 반환한다.")
+    void deleteCategoryNotFound() throws Exception {
+
+        mvc.perform(delete(URI + "/" + 9999L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
 }
