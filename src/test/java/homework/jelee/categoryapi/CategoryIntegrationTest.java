@@ -120,6 +120,36 @@ public class CategoryIntegrationTest {
     }
 
     @Test
+    @DisplayName("카테고리 수정 시 필수 값이 없을 경우 400 상태 코드를 반환한다.")
+    void updateCategoryBadRequest() throws Exception {
+        //given(name null)
+        CategoryUpdateRequest request = new CategoryUpdateRequest();
+
+        //when, then
+        mvc.perform(put(URI + "/" + 1L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("카테고리 수정 시 유효하지 않은 카테고리 아이디일 경우에는 404 상태 코드를 반환한다.")
+    void updateCategoryNotFound() throws Exception {
+        //given
+        CategoryUpdateRequest request = new CategoryUpdateRequest();
+        String newCategoryName = "아우터";
+        request.setCategoryName(newCategoryName);
+
+        //when, then
+        mvc.perform(put(URI + "/" + 999L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("카테고리 삭제")
     void deleteCategory() throws Exception {
         //given
