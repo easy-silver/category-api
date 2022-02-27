@@ -98,6 +98,20 @@ public class CategoryIntegrationTest {
     }
 
     @Test
+    @DisplayName("하위 카테고리 조회 시 상위 카테고리 ID가 유효하지 않을 경우 404 상태 코드를 반환한다.")
+    void getCategoriesNotFound() throws Exception {
+        //given
+        String invalidId = "999";
+
+        //when, then
+        mvc.perform(get(URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .param("categoryId", invalidId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("카테고리 수정")
     void updateCategory() throws Exception {
         //given
