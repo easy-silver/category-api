@@ -164,6 +164,20 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("하위 카테고리 목록 조회 시 상위 카테고리 ID가 유효하지 않을 경우 EntityNotFoundException이 발생한다.")
+    void getSubCategoriesParentNotFound() {
+        //given
+        Long notExistId = 999L;
+
+        //mocking
+        given(categoryRepository.findById(notExistId))
+                .willReturn(Optional.empty());
+
+        //when, then
+        assertThrows(EntityNotFoundException.class, () -> categoryService.getCategories(notExistId));
+    }
+
+    @Test
     @DisplayName("카테고리 수정")
     void updateCategory() {
         //give
