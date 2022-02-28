@@ -162,6 +162,22 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("카테고리 수정 시 유효한 카테고리 ID가 아닐 경우 EntityNotFoundException이 발생한다.")
+    void updateCategoryNotFound() {
+        //given
+        Long notExistId = 999L;
+        CategoryUpdateRequest request = new CategoryUpdateRequest();
+        request.setCategoryName("안경");
+
+        //mocking
+        given(categoryRepository.findById(notExistId))
+                .willReturn(Optional.empty());
+
+        //when, then
+        assertThrows(EntityNotFoundException.class, () -> categoryService.updateCategory(notExistId, request));
+    }
+
+    @Test
     @DisplayName("카테고리 삭제")
     void deleteCategory() {
         //given
@@ -180,6 +196,20 @@ class CategoryServiceTest {
 
         //then
         verify(categoryRepository, times(1)).delete(any());
+    }
+
+    @Test
+    @DisplayName("카테고리 삭제 시 유효한 카테고리 ID가 아닐 경우 EntityNotFoundException이 발생한다.")
+    void deleteCategoryNotFound() {
+        //given
+        Long notExistId = 999L;
+
+        //mocking
+        given(categoryRepository.findById(notExistId))
+                .willReturn(Optional.empty());
+
+        //when, then
+        assertThrows(EntityNotFoundException.class,  () -> categoryService.deleteCategory(notExistId));
     }
 
 }
