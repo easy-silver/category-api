@@ -1,6 +1,9 @@
 package homework.jelee.categoryapi.domain.category;
 
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -19,18 +22,21 @@ public class Category {
     private String name;
 
     //상위 카테고리
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     private Category parent;
 
     //하위 카테고리 리스트
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.REMOVE)
     private List<Category> children = new ArrayList<>();
 
     @Builder
     public Category(String name, Category parent) {
         this.name = name;
         this.parent = parent;
+        if (parent != null) {
+            parent.addChild(this);
+        }
     }
 
     /**
