@@ -15,12 +15,12 @@ import javax.validation.constraints.NotEmpty;
 @Getter @Setter
 public class CategoryCreateRequest {
 
-    @ApiModelProperty(value = "카테고리 이름", required = true, example = "아우터")
     @NotEmpty
+    @ApiModelProperty(value = "카테고리 이름", required = true, example = "아우터")
     private String categoryName;
 
-    @ApiModelProperty(value = "상위 카테고리 아이디", example = "1")
     @Min(1)
+    @ApiModelProperty(value = "상위 카테고리 아이디", example = "1")
     private Long parentId;
 
     public Category toEntity() {

@@ -49,7 +49,7 @@ public class CategoryService {
         return getSubCategories(parent);
     }
 
-    //전체 카테고리 조회
+    //루트 카테고리를 조회하며 전체 카테고리 조회
     private List<CategoryListQueryResult> getAllCategories() {
         return repository.findAllByParentIsNull()
                 .stream()
