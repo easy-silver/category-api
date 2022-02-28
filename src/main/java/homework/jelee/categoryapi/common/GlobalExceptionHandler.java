@@ -1,6 +1,7 @@
 package homework.jelee.categoryapi.common;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -19,9 +20,9 @@ public class GlobalExceptionHandler {
     /**
      * 유효하지 않은 입력 값 오류 핸들러(400)
      */
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
-        log.error("handleIllegalArgumentException", e);
+    @ExceptionHandler(value = {IllegalArgumentException.class, TypeMismatchException.class})
+    public ResponseEntity<ErrorResponse> handleInvalidArgumentException(RuntimeException e) {
+        log.error("handleInvalidArgumentException", e);
 
         HttpStatus status = HttpStatus.BAD_REQUEST;
         return new ResponseEntity<>(new ErrorResponse(status.value(), status.getReasonPhrase(), e.getMessage()),
