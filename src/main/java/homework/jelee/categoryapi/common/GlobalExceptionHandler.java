@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 입력 값 검증 오류에 대한 핸들러(400)
+     * Validation을 통한 Request 값 검증 오류에 대한 핸들러(400)
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -57,6 +57,17 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(new ErrorResponse(status.value(),status.getReasonPhrase(), e.getMessage()),
                 status);
+    }
+
+    /**
+     * 서버 장애에 대한 공통 처리 핸들러(500)
+     */
+    @ExceptionHandler(value = {Exception.class, RuntimeException.class})
+    public ResponseEntity<ErrorResponse> handleUnexpectedException(RuntimeException e) {
+        log.error("handleUnexpectedException", e);
+
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+        return new ResponseEntity<>(new ErrorResponse(status.value(), status.getReasonPhrase(), e.getMessage()), status);
     }
 
 }
