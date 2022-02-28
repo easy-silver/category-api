@@ -135,6 +135,35 @@ class CategoryServiceTest {
     }
 
     @Test
+    @DisplayName("상위 카테고리 ID로 하위 카테고리 목록 조회")
+    void getSubCategories() {
+        //given
+        Category parentCategory = Category.builder()
+                .name("쥬얼리")
+                .build();
+        Long parentId = 1L;
+        ReflectionTestUtils.setField(parentCategory, "id", parentId);
+
+        Category childCategory = Category.builder()
+                .parent(parentCategory)
+                .name("귀걸이")
+                .build();
+
+        //mocking
+        given(categoryRepository.findById(parentId))
+                .willReturn(Optional.of(parentCategory));
+        given(categoryRepository.findAllByParent(parentCategory))
+                .willReturn(parentCategory.getChildren());
+
+        //when
+        List<CategoryListQueryResult> categories = categoryService.getCategories(parentId);
+
+        //then
+        assertThat(categories.get(0).getParentId()).isEqualTo(parentId);
+        assertThat(categories.get(0).getCategoryName()).isEqualTo(childCategory.getName());
+    }
+
+    @Test
     @DisplayName("카테고리 수정")
     void updateCategory() {
         //give
