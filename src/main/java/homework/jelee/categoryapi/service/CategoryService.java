@@ -100,7 +100,7 @@ public class CategoryService {
     private void setParentCategory(Category category, Long parentId) {
         if (parentId != null) {
             Category parent = getCategoryEntity(parentId);
-            category.setParent(parent);
+            category.changeParent(parent);
         }
     }
 
