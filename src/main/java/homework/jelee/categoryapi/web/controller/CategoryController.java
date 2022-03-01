@@ -23,7 +23,7 @@ public class CategoryController {
      * 카테고리 등록
      * 성공 시 204 코드와 생성된 ID 반환
      */
-    @ApiOperation(value = "카테고리 신규 등록", notes = "새 카테고리를 등록합니다.")
+    @ApiOperation(value = "카테고리 신규 등록", notes = "새 카테고리를 등록한 후 등록된 카테고리의 ID를 반환합니다.")
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("")
     public Long createCategory(@Valid @RequestBody CategoryCreateRequest request) {
@@ -34,7 +34,8 @@ public class CategoryController {
     /**
      * 카테고리 목록 조회
      */
-    @ApiOperation(value = "카테고리 목록 조회", notes = "카테고리 목록을 조회합니다.\n 아이디가 있을 경우 해당 아이디의 하위 카테고리를 조회합니다.")
+    @ApiOperation(value = "카테고리 목록 조회", notes = "상위 카테고리 아이디를 이용해 하위의 모든 카테고리를 조회합니다. \n" +
+            "상위 카테고리 아이디를 지정하지 않을 시 전체 카테고리를 조회합니다.")
     @GetMapping("")
     public CategoryListResponse getCategories(
             @ApiParam(value = "카테고리 아이디", example = "1")
@@ -46,7 +47,7 @@ public class CategoryController {
     /**
      * 카테고리 수정
      */
-    @ApiOperation(value = "카테고리 수정", notes = "카테고리 정보를 수정합니다.")
+    @ApiOperation(value = "카테고리 수정", notes = "카테고리의 이름, 부모 카테고리를 변경합니다.")
     @PutMapping("/{categoryId}")
     public void updateCategory(
             @ApiParam(value = "카테고리 아이디", required = true, example = "1")
